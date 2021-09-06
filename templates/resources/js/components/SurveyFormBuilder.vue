@@ -73,8 +73,9 @@
 
 
 <template>
-  <div class="row">
-    <div class="col-3">
+  <div class="container">
+    <div class="row">
+    <div class="col-4">
       <h3>Available list</h3>
       <draggable
         class="dragArea list-group"
@@ -89,7 +90,7 @@
       </draggable>
     </div>
 
-    <div class="col-3">
+    <div class="col-8 bg-light">
       <h3>Questions</h3>
       <form @submit.prevent="submit_btn" method="POST">
       <draggable
@@ -98,38 +99,40 @@
         group="people"
         @change="log"
       >
-        <div class="list-group-item" v-for="element in list2" :key="element.id">
-              {{ element.title }}
-              <input type="element.type">
+        <div class="list-group-item border-2" v-for="(element,index) in list2" :key="element.id">
+              <div class="d-flex justify-content-between mb-2">
+                {{ element.title }} No {{ index+1 }}
+                <span @click="removeQue(index)" class="btn btn-danger">remove</span>
+              </div>
+              <input :name="`question-${element.id}`" class="form-control" type="element.type">
               <div v-if ="element.type === 'radio'">
                 Options
-                <textarea></textarea>
+                <textarea :name="`radio-${element.id}`" class="form-control"></textarea>
               </div>
               <div v-if="element.type === 'select'" >
                 <p>Options</p>
-               <textarea></textarea>
+               <textarea :name="`select-${element.id}`" class="form-control"></textarea>
               </div>
               <div v-if="element.type === 'checkbox'" >
                 <p>Options</p>
-                <textarea></textarea>
+                <textarea :name="`checkbox-${element.id}`" class="form-control"></textarea>
               </div>
         </div>
-
-
       </draggable>
-        <div>
+        <div class="mt-3">
           <button class="btn btn-primary" type="submit"> Save </button>
         </div>
         </form>
     </div>
 
   </div>
+  </div>
 </template>
 
 <script>
 import draggable from "vuedraggable";
 import axios from 'axios'
-let idGlobal = 8;
+let idGlobal = 1;
 export default {
   name: "SurveyFormBuilder",
   display: "Custom Clone",
@@ -140,8 +143,7 @@ export default {
   data() {
     return {
       list1: [],
-      list2: [
-      ]
+      list2: []
     };
   },
   methods: {
@@ -154,22 +156,26 @@ export default {
       ).catch(error=>console.log(error))
     },
     log: function(evt) {
-      window.console.log(evt);
+      if(evt.added)
+        ++idGlobal
+
+      // window.console.log(evt);
     },
     cloneDog({ id }) {
-      // console.log(id)
-      // console.log(this.list1[id-1])
       return {
+        id:idGlobal,
         title: `Add question?`,
-        type: `${this.list1[id-1].type}`
+        type: `${this.list1[id-1].type}`,
       };
+    },
+    removeQue(index){
+      this.list2.splice(index,1)
     }
   },
   mounted() {
     let url = '/question-type'
     axios.get(url)
         .then(res=>{
-            console.log(res.data)
             this.list1 = res.data
           }
         ).catch(err=>console.log(err))

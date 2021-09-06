@@ -2040,9 +2040,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
-var idGlobal = 8;
+var idGlobal = 1;
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "SurveyFormBuilder",
   display: "Custom Clone",
@@ -2068,16 +2071,18 @@ var idGlobal = 8;
       });
     },
     log: function log(evt) {
-      window.console.log(evt);
+      if (evt.added) ++idGlobal; // window.console.log(evt);
     },
     cloneDog: function cloneDog(_ref) {
       var id = _ref.id;
-      // console.log(id)
-      // console.log(this.list1[id-1])
       return {
+        id: idGlobal,
         title: "Add question?",
         type: "".concat(this.list1[id - 1].type)
       };
+    },
+    removeQue: function removeQue(index) {
+      this.list2.splice(index, 1);
     }
   },
   mounted: function mounted() {
@@ -2085,7 +2090,6 @@ var idGlobal = 8;
 
     var url = '/question-type';
     axios__WEBPACK_IMPORTED_MODULE_1___default.a.get(url).then(function (res) {
-      console.log(res.data);
       _this.list1 = res.data;
     })["catch"](function (err) {
       return console.log(err);
@@ -6293,101 +6297,141 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row" }, [
-    _c(
-      "div",
-      { staticClass: "col-3" },
-      [
-        _c("h3", [_vm._v("Available list")]),
-        _vm._v(" "),
-        _c(
-          "draggable",
-          {
-            staticClass: "dragArea list-group",
-            attrs: {
-              list: _vm.list1,
-              group: { name: "people", pull: "clone", put: false },
-              clone: _vm.cloneDog
-            },
-            on: { change: _vm.log }
-          },
-          _vm._l(_vm.list1, function(element) {
-            return _c(
-              "div",
-              { key: element.id, staticClass: "list-group-item" },
-              [_vm._v("\n        " + _vm._s(element.title) + "\n      ")]
-            )
-          }),
-          0
-        )
-      ],
-      1
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "col-3" }, [
-      _c("h3", [_vm._v("Questions")]),
-      _vm._v(" "),
+  return _c("div", { staticClass: "container" }, [
+    _c("div", { staticClass: "row" }, [
       _c(
-        "form",
-        {
-          attrs: { method: "POST" },
-          on: {
-            submit: function($event) {
-              $event.preventDefault()
-              return _vm.submit_btn.apply(null, arguments)
-            }
-          }
-        },
+        "div",
+        { staticClass: "col-4" },
         [
+          _c("h3", [_vm._v("Available list")]),
+          _vm._v(" "),
           _c(
             "draggable",
             {
               staticClass: "dragArea list-group",
-              attrs: { list: _vm.list2, group: "people" },
+              attrs: {
+                list: _vm.list1,
+                group: { name: "people", pull: "clone", put: false },
+                clone: _vm.cloneDog
+              },
               on: { change: _vm.log }
             },
-            _vm._l(_vm.list2, function(element) {
+            _vm._l(_vm.list1, function(element) {
               return _c(
                 "div",
                 { key: element.id, staticClass: "list-group-item" },
-                [
-                  _vm._v(
-                    "\n            " + _vm._s(element.title) + "\n            "
-                  ),
-                  _c("input", { attrs: { type: "element.type" } }),
-                  _vm._v(" "),
-                  element.type === "radio"
-                    ? _c("div", [
-                        _vm._v("\n              Options\n              "),
-                        _c("textarea")
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  element.type === "select"
-                    ? _c("div", [
-                        _c("p", [_vm._v("Options")]),
-                        _vm._v(" "),
-                        _c("textarea")
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  element.type === "checkbox"
-                    ? _c("div", [
-                        _c("p", [_vm._v("Options")]),
-                        _vm._v(" "),
-                        _c("textarea")
-                      ])
-                    : _vm._e()
-                ]
+                [_vm._v("\n        " + _vm._s(element.title) + "\n      ")]
               )
             }),
             0
-          ),
-          _vm._v(" "),
-          _vm._m(0)
+          )
         ],
         1
-      )
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-8 bg-light" }, [
+        _c("h3", [_vm._v("Questions")]),
+        _vm._v(" "),
+        _c(
+          "form",
+          {
+            attrs: { method: "POST" },
+            on: {
+              submit: function($event) {
+                $event.preventDefault()
+                return _vm.submit_btn.apply(null, arguments)
+              }
+            }
+          },
+          [
+            _c(
+              "draggable",
+              {
+                staticClass: "dragArea list-group",
+                attrs: { list: _vm.list2, group: "people" },
+                on: { change: _vm.log }
+              },
+              _vm._l(_vm.list2, function(element, index) {
+                return _c(
+                  "div",
+                  { key: element.id, staticClass: "list-group-item border-2" },
+                  [
+                    _c(
+                      "div",
+                      { staticClass: "d-flex justify-content-between mb-2" },
+                      [
+                        _vm._v(
+                          "\n              " +
+                            _vm._s(element.title) +
+                            " No " +
+                            _vm._s(index + 1) +
+                            "\n              "
+                        ),
+                        _c(
+                          "span",
+                          {
+                            staticClass: "btn btn-danger",
+                            on: {
+                              click: function($event) {
+                                return _vm.removeQue(index)
+                              }
+                            }
+                          },
+                          [_vm._v("remove")]
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("input", {
+                      staticClass: "form-control",
+                      attrs: {
+                        name: "question-" + element.id,
+                        type: "element.type"
+                      }
+                    }),
+                    _vm._v(" "),
+                    element.type === "radio"
+                      ? _c("div", [
+                          _vm._v("\n              Options\n              "),
+                          _c("textarea", {
+                            staticClass: "form-control",
+                            attrs: { name: "radio-" + element.id }
+                          })
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    element.type === "select"
+                      ? _c("div", [
+                          _c("p", [_vm._v("Options")]),
+                          _vm._v(" "),
+                          _c("textarea", {
+                            staticClass: "form-control",
+                            attrs: { name: "select-" + element.id }
+                          })
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    element.type === "checkbox"
+                      ? _c("div", [
+                          _c("p", [_vm._v("Options")]),
+                          _vm._v(" "),
+                          _c("textarea", {
+                            staticClass: "form-control",
+                            attrs: { name: "checkbox-" + element.id }
+                          })
+                        ])
+                      : _vm._e()
+                  ]
+                )
+              }),
+              0
+            ),
+            _vm._v(" "),
+            _vm._m(0)
+          ],
+          1
+        )
+      ])
     ])
   ])
 }
@@ -6396,7 +6440,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", [
+    return _c("div", { staticClass: "mt-3" }, [
       _c(
         "button",
         { staticClass: "btn btn-primary", attrs: { type: "submit" } },
@@ -21158,8 +21202,8 @@ var app = new Vue({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\sharif\python_projects\django-vue\templates\resources\js\main.js */"./templates/resources/js/main.js");
-module.exports = __webpack_require__(/*! D:\sharif\python_projects\django-vue\templates\resources\scss\styles.scss */"./templates/resources/scss/styles.scss");
+__webpack_require__(/*! E:\Django projects\django-vue\django-survey-builder\templates\resources\js\main.js */"./templates/resources/js/main.js");
+module.exports = __webpack_require__(/*! E:\Django projects\django-vue\django-survey-builder\templates\resources\scss\styles.scss */"./templates/resources/scss/styles.scss");
 
 
 /***/ })
